@@ -23,4 +23,74 @@ class TicTacToe
     puts " #{@board[6]} | #{@board[7]} | #{@board[8]} "
   end
 
-  
+  def input_to_index(user_input)
+    user_input.to_i - 1
+  end
+
+  def move(index,current_player="X")
+    @board[index]=current_player
+  end
+
+  def position_taken?(index)
+    !(@board[index].nil? || @board[index] == " ")
+  end
+
+  def valid_move?(index)
+    index.between?(0,8) && !position_taken?(index)
+  end
+
+  def turn_count
+    turn=0
+    @board.each do |index|
+      if index == "X" || index == "0"
+        turn += 1
+      end
+    end
+    return turn
+  end
+
+  def current_player
+    number_turns=turn_count
+    if number_turns%2==0
+      player="X"
+    else
+      player="O"
+    end
+    return player
+  end
+
+  def turn
+    puts "Please choose a number 1-9:"
+    user_input=gets.chomp
+    index=input_to_index(user_input)
+    if valid_move?(index)
+      player_token=current_player
+      move(index,player_token)
+      display_board
+    else
+      turn
+    end
+  end
+
+  def won?
+    WIN_COMBINATIONS.each {|winning_trio|
+      index_0=winning_trio[0]
+      index_1=winning_trio[1]
+      index_2=winning_trio[2]
+
+      position_1=@board[index_0]
+      position_2=@board[index_1]
+      position_3=@board[index_2]
+
+      if position_1=="X" && position_2=="X" && position_3=="X"
+        return winning_trio
+      elsif position_1=="O" && position_2=="O" && position_3=="O"
+        return winning_trio
+      end
+    }
+return false
+end
+
+def full?
+  @board.all? {|index| index=="X" || index=="O"}
+end
